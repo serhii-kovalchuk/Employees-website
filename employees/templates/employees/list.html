@@ -1,0 +1,164 @@
+{% extends "employees/base.html" %}
+{% block content %}
+	
+	<h1 class="mt-4 mb-4">Employees list</h1>
+	<div class="border mb-4">
+		<form class="m-3" id="search-form">
+
+			<div class="row">
+				<div class="form-group col-md-3">
+				    <label for="id">Id</label>
+				    <input type="number" class="form-control" id="id">
+				</div>
+				<div class="form-group col-md-3">
+				    <label for="first_name">First name</label>
+				    <input type="string" class="form-control" id="first_name">
+				</div>
+				<div class="form-group col-md-3">
+				    <label for="middle_name">Middle name</label>
+				    <input type="string" class="form-control" id="middle_name">
+				</div>
+				<div class="form-group col-md-3">
+				    <label for="last_name">Last name</label>
+				    <input type="string" class="form-control" id="last_name">
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="form-group col-md-3">
+				    <label for="position">Position</label>
+				    <input type="string" class="form-control" id="position">
+				</div>
+				<div class="form-group col-md-3">
+				    <label for="empl_date">Employment date</label>
+				    <input type="date" class="form-control" id="empl_date">
+				</div>
+				<div class="form-group col-md-3">
+				    <label for="salary">Salary</label>
+				    <input type="number" class="form-control" id="salary">
+				</div>
+				<div class="form-group col-md-3">
+				    <label for="superviser_id">Superviser id</label>
+				    <input type="number" class="form-control" id="superviser_id">
+				</div>
+			</div>
+
+			<label>Sort by:</label><br>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="id" value="id">
+				<label class="form-check-label" for="id">Id</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="first_name" value="first_name">
+				<label class="form-check-label" for="first_name">First name</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="middle_name" value="middle_name">
+				<label class="form-check-label" for="middle_name">Middle name</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="last_name" value="last_name">
+				<label class="form-check-label" for="last_name">Last name</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="position" value="position">
+				<label class="form-check-label" for="position">Position</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="empl_date" value="empl_date">
+				<label class="form-check-label" for="empl_date">Employment date</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="salary" value="salary">
+				<label class="form-check-label" for="salary">Salary</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="radio" name="db_field" id="superviser_id" value="superviser_id">
+				<label class="form-check-label" for="superviser_id">Sperviser id</label>
+			</div>
+			<br><br>
+			
+			<input class="btn btn-primary" type="submit" value="Search">
+
+		</form>
+	</div>
+
+	<div id="results">
+		{% autoescape off %}
+            {{ html }}
+        {% endautoescape %}
+	</div>
+
+
+	<script type="text/javascript">		
+		
+		$(document).ready(function(){
+			$('#search-form').on('submit', function(event){
+
+				event.preventDefault();
+				sort_param = $('input[name=db_field]:checked', this).val();
+				id = $('#id').val();
+				first_name = $('#first_name').val();
+				middle_name = $('#middle_name').val();
+				last_name = $('#last_name').val();
+				position = $('#position').val();
+				empl_date = $('#empl_date').val();
+				salary = $('#salary').val();
+				superviser_id = $('#superviser_id').val();
+
+				$.ajax({
+					url: "search",
+					data: {'sort_param': sort_param,
+							'id': id,
+							'first_name': first_name,
+							'middle_name': middle_name,
+							'last_name': last_name,
+							'position': position,
+							'empl_date': empl_date,
+							'salary': salary,
+							'superviser_id': superviser_id
+					}, 
+					success: function(result){
+						$('#results').empty();
+						$('#results').append(result['html']);
+					}
+				});
+			});
+
+			$(document.body).on('click', "[name=page]", function(event){
+
+				page = $(this).attr('id');
+				sort_param = $('input[name=db_field]:checked').val();
+				id = $('#id').val();
+				first_name = $('#first_name').val();
+				middle_name = $('#middle_name').val();
+				last_name = $('#last_name').val();
+				position = $('#position').val();
+				empl_date = $('#empl_date').val();
+				salary = $('#salary').val();
+				superviser_id = $('#superviser_id').val();
+
+				$.ajax({
+					url: "search",
+					data: {'page': page,
+							'sort_param': sort_param,
+							'id': id,
+							'first_name': first_name,
+							'middle_name': middle_name,
+							'last_name': last_name,
+							'position': position,
+							'empl_date': empl_date,
+							'salary': salary,
+							'superviser_id': superviser_id
+					}, 
+					success: function(result){
+						$('#results').empty();
+						$('#results').append(result['html']);
+					}
+				});
+			});
+		});
+
+	</script>
+
+{% endblock content %}

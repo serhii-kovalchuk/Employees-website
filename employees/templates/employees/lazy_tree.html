@@ -1,0 +1,82 @@
+{% extends "employees/base.html" %}
+{% block content %}
+	
+	<div id="div">
+		<div id="divc"></div>
+	</div>
+	<div id="div2">
+		<div id="div2c"></div>
+	</div>
+
+	<h1 class="mt-4 mb-4">Employees tree</h1>
+	{% autoescape off %}
+		{{ tree }}
+	{% endautoescape %}
+
+
+	<script type="text/javascript">
+
+		$(document).ready(function(){
+
+			$(document.body).on('click', "li", function(){
+				var cur_elem = $(this);
+				var empl_id = cur_elem.attr("id");
+
+				if (cur_elem.next().is("ul")) {
+					cur_elem.next().detach()
+				} else {
+					$.ajax({
+						url: "open",
+						data: {'id': empl_id}, 
+						success: function(result){
+							cur_elem.after(result['html']);
+						}
+					});
+				};
+			});
+
+
+			$(document.body).on('dragstart', "li", function(event){
+				event.originalEvent.dataTransfer.setData('id', event.target.id);
+			});
+
+
+			$(document.body).on('dragover', "li", function(event){
+				event.preventDefault();
+			});
+
+
+			$(document.body).on('drop', "li", function(event){
+
+				event.preventDefault();
+				data = event.originalEvent.dataTransfer.getData('id');
+				source = $('#' + data);
+				target = $(this);
+
+				if (source.next()[0] && $.contains(source.next()[0], target[0])) {
+					alert('This will create self-loop in hierarcy')
+				} else {
+					if (source.attr('id') != target.attr('id')) {
+						if (source.next().is("ul")) {
+							source.next().detach();
+							}
+							if (target.next().is("ul")) {
+								target.next().append(source[0]);
+							} else {
+								source.detach();
+						}
+						$.ajax({
+							url: "replace",
+							data: {'empl_id': source.attr('id'),
+									'super_id': target.attr('id')}, 
+							success: function(result){
+								cur_elem.after(result['html']);
+							}
+						});
+					}
+				}
+			});
+		});
+		
+	</script>
+{% endblock content %}

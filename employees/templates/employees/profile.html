@@ -1,0 +1,20 @@
+{% extends "employees/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}	
+	<div class="media mt-3">
+        <img src="{{ empl.image.url }}">
+        <div class="media-body ml-5">
+        	<h2 class="account-heading mb-4">{{ empl.first_name }} {{ empl.middle_name }} {{ empl.last_name }}</h2>
+        	<p class="text-secondary">id: {{ empl.id }}</p>
+            <p class="text-secondary">position: {{ empl.position }}</p>
+        	<p class="text-secondary">salary: {{ empl.salary }}</p>
+        	<p class="text-secondary">working since: {{ empl.empl_date }}
+        		<p class="text-secondary">superviser id: {{ empl.superviser_id }}</p>
+
+            <div class="mt-4">
+                <a class="btn btn-outline-info" href="{% url 'empl-update' empl.id %}">Update</a>
+                <a class="btn btn-danger" href="{% url 'empl-delete' empl.id %}">Delete</a>                
+            </div>
+        </div>
+      </div>
+{% endblock content %}
