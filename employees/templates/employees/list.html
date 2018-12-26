@@ -90,44 +90,12 @@
 	</div>
 
 
-	<script type="text/javascript">		
+	<script type="text/javascript">
 		
 		$(document).ready(function(){
-			$('#search-form').on('submit', function(event){
 
-				event.preventDefault();
-				sort_param = $('input[name=db_field]:checked', this).val();
-				id = $('#id').val();
-				first_name = $('#first_name').val();
-				middle_name = $('#middle_name').val();
-				last_name = $('#last_name').val();
-				position = $('#position').val();
-				empl_date = $('#empl_date').val();
-				salary = $('#salary').val();
-				superviser_id = $('#superviser_id').val();
+			function send_ajax(page){
 
-				$.ajax({
-					url: "search",
-					data: {'sort_param': sort_param,
-							'id': id,
-							'first_name': first_name,
-							'middle_name': middle_name,
-							'last_name': last_name,
-							'position': position,
-							'empl_date': empl_date,
-							'salary': salary,
-							'superviser_id': superviser_id
-					}, 
-					success: function(result){
-						$('#results').empty();
-						$('#results').append(result['html']);
-					}
-				});
-			});
-
-			$(document.body).on('click', "[name=page]", function(event){
-
-				page = $(this).attr('id');
 				sort_param = $('input[name=db_field]:checked').val();
 				id = $('#id').val();
 				first_name = $('#first_name').val();
@@ -138,24 +106,45 @@
 				salary = $('#salary').val();
 				superviser_id = $('#superviser_id').val();
 
+				data = {'sort_param': sort_param,
+						'id': id,
+						'first_name': first_name,
+						'middle_name': middle_name,
+						'last_name': last_name,
+						'position': position,
+						'empl_date': empl_date,
+						'salary': salary,
+						'superviser_id': superviser_id};
+				
+				if (page){
+					data['page'] = page;
+				}
+
 				$.ajax({
 					url: "search",
-					data: {'page': page,
-							'sort_param': sort_param,
-							'id': id,
-							'first_name': first_name,
-							'middle_name': middle_name,
-							'last_name': last_name,
-							'position': position,
-							'empl_date': empl_date,
-							'salary': salary,
-							'superviser_id': superviser_id
-					}, 
+					data: data, 
 					success: function(result){
 						$('#results').empty();
 						$('#results').append(result['html']);
 					}
 				});
+
+			};
+
+
+			$('#search-form').on('submit', function(event){
+
+				event.preventDefault();
+				send_ajax(null);
+
+			});
+
+
+			$(document.body).on('click', "[name=page]", function(event){
+
+				page = $(this).attr('id');
+				send_ajax(page);
+
 			});
 		});
 
